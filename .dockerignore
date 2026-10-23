@@ -1,0 +1,6 @@
+# 防止敏感文件与本地产物打进镜像
+.env
+node_modules/
+.git/
+*.log
+.DS_Store

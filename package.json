@@ -1,0 +1,15 @@
+{
+  "name": "douyin-live-printer",
+  "version": "0.1.0",
+  "description": "抖音直播互动打印服务：接收抖音直播小玩法官方 Webhook 事件（点赞/评论/送礼/粉丝团/关注），通过飞鹅云打印 API 输出热敏小票",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "check": "node --check src/config.js && node --check src/feie.js && node --check src/douyin.js && node --check src/templates.js && node --check src/queue.js && node --check src/printer.js && node --check src/server.js",
+    "test:signature": "node scripts/verify-signature.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}

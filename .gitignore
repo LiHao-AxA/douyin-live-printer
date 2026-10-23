@@ -1,0 +1,11 @@
+# 敏感配置（绝不提交，密钥在抖音云控制台环境变量中配置）
+.env
+.env.local
+.env.*.local
+
+# 依赖与本地产物
+node_modules/
+npm-debug.log*
+*.log
+.DS_Store
+dist/
