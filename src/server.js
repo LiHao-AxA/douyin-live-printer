@@ -19,13 +19,14 @@ const { verifySignature, checkTimestamp, parsePush } = require('./douyin');
 const { PrinterService } = require('./printer');
 const { FEIE_ERROR_HINTS } = require('./feie');
 
-let service;
+let service = null;
+let configError = null;
 try {
   service = new PrinterService(config);
 } catch (e) {
+  configError = e.message;
   console.error(`[config] ${e.message}`);
-  console.error('[config] 请先复制 .env.example 为 .env 并填写配置');
-  process.exit(1);
+  console.error('[config] 降级启动：HTTP 服务保持可用；补齐环境变量（FEIE_USER/FEIE_UKEY/PRINTER_SN/PRINTER_KEY）后重启自动恢复');
 }
 
 // ---------------- 工具 ----------------
@@ -106,8 +107,17 @@ async function handle(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const path = url.pathname;
 
+  // 服务未配置（缺飞鹅/打印机配置）时：健康检查与网页保持可用，业务接口返回明确提示
+  if (!service && path !== '/health') {
+    return sendJson(res, 200, {
+      ret: -1,
+      msg: '服务未配置：' + (configError || '未知错误'),
+      hint: '在抖音云控制台「服务设置-环境变量」补齐 FEIE_USER/FEIE_UKEY/PRINTER_SN/PRINTER_KEY 后重启',
+    });
+  }
+
   if (req.method === 'GET' && path === '/health') {
-    return sendJson(res, 200, { ok: true, queuePending: service.queue.pending });
+    return sendJson(res, 200, { ok: true, ready: !!service, configError });
   }
 
   if (req.method === 'GET' && path === '/stats') {
@@ -247,7 +257,7 @@ server.listen(config.port, () => {
 });
 
 // 配置了 PRINTER_KEY 时启动即自动绑定（已绑定则幂等提示，不阻塞服务）
-if (config.printer.sn && config.printer.key) {
+if (service && config.printer.sn && config.printer.key) {
   service
     .bindPrinter(config.printer.sn, config.printer.key)
     .then((data) => console.log('[server] 打印机绑定成功:', JSON.stringify(data)))

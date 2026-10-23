@@ -17,7 +17,7 @@ class FeieClient {
     }
     this.user = user;
     this.ukey = ukey;
-    this.apiBase = apiBase || 'http://api.de.feieyun.com/Api/Open/';
+    this.apiBase = apiBase || 'https://api.feieyun.cn/Api/Open/';
   }
 
   _sign(stime) {
