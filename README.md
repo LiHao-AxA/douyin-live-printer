@@ -58,16 +58,16 @@ node src/server.js    # 或 npm start
 node scripts/diagnose.js
 
 # 查打印机是否在线
-curl "http://localhost:8080/printers/status"
+curl "http://localhost:8000/printers/status"
 
 # 打一张测试票
-curl -X POST "http://localhost:8080/test-print"
+curl -X POST "http://localhost:8000/test-print"
 
 # 如果没绑定打印机，先绑机（sn/key 在机器底部标签）
-curl -X POST "http://localhost:8080/printers/add?sn=SN编号&key=KEY密钥"
+curl -X POST "http://localhost:8000/printers/add?sn=SN编号&key=KEY密钥"
 
 # 看队列统计
-curl "http://localhost:8080/stats"
+curl "http://localhost:8000/stats"
 ```
 
 ### 5. 模拟抖音推送（没有真数据时测试全链路）
@@ -75,7 +75,7 @@ curl "http://localhost:8080/stats"
 ```bash
 # 用官方签名算法构造一次 live_gift 推送（secret 换成你 .env 里的 DOUYIN_SECRET）
 # 参考 scripts/verify-signature.js 里的算法即可，验签失败会返回 401
-curl -X POST http://localhost:8080/douyin/webhook \
+curl -X POST http://localhost:8000/douyin/webhook \
   -H "Content-Type: application/json" \
   -H "x-nonce-str: 123456" \
   -H "x-timestamp: $(date +%s%3N)" \
@@ -102,7 +102,7 @@ curl -X POST http://localhost:8080/douyin/webhook \
 ## 四、抖音平台配置
 
 1. 通过**直播小玩法**创意提案后，在抖音开放平台「数据推送」中配置：
-   - 回调地址：`http://<公网IP或域名>:8080/douyin/webhook`（需公网可达；本地联调可用内网穿透）
+   - 回调地址：`http://<公网IP或域名>:8000/douyin/webhook`（需公网可达；本地联调可用内网穿透）
    - 签名秘钥：自定义一段字符串，填到 `.env` 的 `DOUYIN_SECRET`
 2. 推送启动：小玩法被挂载后，调用平台的「启动数据推送任务」接口（`roomid + 玩法id + 消息类型`）
 3. 收到推送后建议调用「互动数据履约上报」接口，保障推送可靠性

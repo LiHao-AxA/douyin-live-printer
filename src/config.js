@@ -50,7 +50,7 @@ function parseRoomMap(raw) {
 }
 
 const config = {
-  port: parseInt(get('PORT', '80'), 10),
+  port: parseInt(get('PORT', '8000'), 10),
   feie: {
     user: get('FEIE_USER', ''),
     ukey: get('FEIE_UKEY', ''),

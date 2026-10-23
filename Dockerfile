@@ -13,9 +13,10 @@ COPY .env.example ./
 
 # 【关键】抖音云平台固定以 /opt/application/run.sh 启动服务（命令：ulimit ... && /opt/application/run.sh），
 # 不执行 Dockerfile 的 CMD；缺此文件会报 exit status 127 / run.sh not found
+# 平台 FaaS 探测 8000 端口，服务必须监听 8000（config.js 默认 PORT=8000）
 COPY run.sh /opt/application/run.sh
 RUN chmod +x /opt/application/run.sh
 
-EXPOSE 80
+EXPOSE 8000
 
 CMD ["/opt/application/run.sh"]
